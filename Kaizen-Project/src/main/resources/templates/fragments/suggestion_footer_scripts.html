@@ -1,0 +1,116 @@
+<footer th:fragment="suggestion_footer_scripts">
+<script type="text/javascript">
+$('#show_data').on('show.bs.modal', function (event) {
+  console.log('Modal Opened');
+    var d = new Date();
+    var year = d.getFullYear();
+    var button = $(event.relatedTarget)
+    var release_date = button.data('release_date')
+    var receipent = button.data('receipent')
+    var facilitator = button.data('facilitator')
+    var problem = button.data('problem')
+    var proposed = button.data('proposed_solution')
+    var domaine = button.data('domaine')
+    var id_sugg = button.data('id')
+    var id_user = button.data('user_id')
+    var adopted_solution = button.data('adopted_solution')
+    var retained_sugg = button.data('retained_sugg')
+    var sender = button.data('sender')
+    var justification = button.data('justification')
+    var file = button.data('file')
+    var modal = $(this)
+    modal.find('.modal-body #release_date').val(release_date);
+    modal.find('.modal-body #receipent').val(receipent);
+    modal.find('.modal-body #facilitator').val(facilitator);
+    modal.find('.modal-body #prob_amelioration').val(problem);
+    modal.find('.modal-body #proposed_solution').val(proposed);
+    modal.find('.modal-body #suggestion_domaine').val(domaine);
+    modal.find('.modal-header h3').text('Submission Date : ' + release_date);
+    modal.find('.modal-header #reference').text('Ref : ' + id_sugg + '/' + year);
+    modal.find('.modal-body #adopted_solution').val(adopted_solution);
+    modal.find('.modal-body #justification').val(justification);
+    modal.find('.modal-body #id_sugg').val(id_sugg);
+    modal.find('.modal-body #id_user').val(id_user);
+    modal.find('.modal-body #sender').val(sender);
+    if(file == null){
+      modal.find('.modal-body #attached_file').text("no attachement file");
+      modal.find('.modal-body #attached_file').removeAttr("download");
+      modal.find('.modal-body #attached_file').removeAttr("href");
+      modal.find('.modal-body #attached_file').css("text-decoration","none");
+      modal.find('.modal-body #attached_file').css("color","gray");
+    }else{
+      src = 'getFile?filename='+ file;
+      modal.find('.modal-body #attached_file').attr("href",src);
+      modal.find('.modal-body #attached_file').text(file);
+      modal.find('.modal-body #attached_file').attr("download",file);
+      modal.find('.modal-body #attached_file').css("text-decoration","none");
+      modal.find('.modal-body #attached_file').css("color","#6a6be4");
+    }
+	//modal.find('.modal-body #avatar_profile').attr("src", src);
+    if(retained_sugg == "Refused"){
+      modal.find('.modal-body #retained_sugg').val("Refused");
+    }else if(retained_sugg == "Approved"){
+      modal.find('.modal-body #retained_sugg').val("Approved");
+    }else{
+      modal.find('.modal-body #retained_sugg').val("Pending");
+    }
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#search").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".searchable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+<script type="text/javascript">
+$(function() {
+   $("input:file").change(function (){
+     var fileName = $(this).val();
+     if(fileName != ""){
+       $(".filename").html("File uploaded");
+       $(".filename").css("color","green");
+     }else{
+       $(".filename").html("No file chosen");
+       $(".filename").css("color","red");
+     }
+
+   });
+});
+</script>
+
+    @include('autocomplete')
+    <script>
+    $(function() {
+      $(".heart").on("click", function(event) {
+        $(this).toggleClass("heart-blast");
+        var a = $(this).data("id");
+        var id = $('#id_sugg').val()
+        console.log(a);
+        $.ajax({
+              url: "{{ route('addlikes') }}",
+              type: 'POST',
+              data: { id: a , _token : "{{ csrf_token() }}" }
+          });
+      });
+    });
+    </script>
+    <script type="text/javascript">
+    $('#dropdownMenu1').on('click',function(){
+          $('#second-modal-notification').modal('show');
+    });
+    </script>
+    <script type="text/javascript">
+    $(".alert").fadeTo(2000, 500).slideUp(500, function(){
+        $(".alert").slideUp(500);
+    });
+    </script>
+    <!--<script type="text/javascript">
+    $(document).ready( function () {
+        $('#mydata_table').DataTable();
+    } );
+    </script>-->
+</footer>

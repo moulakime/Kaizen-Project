@@ -1,0 +1,66 @@
+1- Décrire les SW
+2- Familles des SW (SOAP/Rest)
+3- Formats des SW
+4- L'architecture des SW
+5- Les implémentations
+* les services web sont des composants distribuées qui offre des fonctionalités (Métier ou Technique)
+* Familles des SW : (SOAP : Sample Object Access Protocole)(REST : Representation State Transfer)
+* Serialization (transferer un Objet en XML)
+* Deserialization (transformer un fichier XML en Objet)
+* SOAP {HTTP, HTTPS, FTP, SMTP...}
+* Rest {HTTP}
+* Rest (Jevesey / Jachson ...)
+* SOAP (Axis / XFire ...)
+* JAX-B 2.0 JEE 5.0 (Java Architecture for XML)
+--> Les moteurs SOAP : - AXIS : Apache extensible Interaction System
+		       - CXF (Apache)
+		       - XFire
+--> JAX-WS 2.0 JEE 5.0 (API)
+--> Java API for XM Web Service
+--> SOA : Service Oriented Architecture
+
+        * Spécification 			   VS 			Implémentation
+              
+		API
+(Application Programming Interface)                      	          Framework
+	(JAX-WS 2.0 Java EE 5.0)	
+								JPA : Java Persistance API 
+							{Hibernate(free), EclipseLink(free), Toplink(oracle)}
+
+preferences -> java -> build Path -> User librairies
+L'architecture des sw de type SOAP :
+-----------------------------------
+1) Découverte : UDDI (Universal Description Discouvery and Integration) (optionnel)
+2) Description : WSDL (Web Service Description Language)
+3) Communication
+4) Transport
+
+Methodes pour développer un sw :
+--------------------------------
+1) Contrat First(on commence pour développer le fichier WSDL)
+2) Code First(le fichier WSDL sera générer)
+
+
+public interface IService{
+
+User getUser(String login);
+
+List<Role> getRoles(String login);
+boolean updatePwd(String login, String newPass);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

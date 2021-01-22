@@ -1,0 +1,262 @@
+<script>
+( function ( $ ) {
+
+  var charts = {
+    init: function () {
+      // -- Set new default font family and font color to mimic Bootstrap's default styling
+      Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+      Chart.defaults.global.defaultFontColor = '#292b2c';
+
+      this.ajaxGetPostMonthlyData();
+
+    },
+
+    ajaxGetPostMonthlyData: function () {
+      var request = $.ajax( {
+        method: 'GET',
+        url: "/chart-data"
+    } );
+
+      request.done( function ( response ) {
+        console.log( response );
+        charts.createCompletedJobsChart( response );
+      });
+    },
+
+    /**
+     * Created the Completed Jobs Chart
+     */
+    createCompletedJobsChart: function ( response ) {
+      //Chart.defaults.global.defaultFontColor = '#fbfbfd';
+      var ctx = document.getElementById("Chart_Line_Sugg").getContext("2d");
+      var myChart = new Chart(ctx, {
+          type: "line",
+          data: {
+              labels: ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.","Jul.", "Aug.", "Sep.", "Oct.", "Nov", "Dec."],
+              //labels : response.department,
+              datasets: [{ 
+           	  label: '# of suggestions per month',
+              data: response , /* [12, 19, 3, 5, 2, 30,5,20,19,21,15,18] */
+              //data : response.COUNT,
+              fontColor: '#fff',
+              lineTension: 0.3,
+              backgroundColor: "rgba(2,117,216,0.2)",
+              borderColor: "rgba(2,117,216,1)",
+              pointRadius: 5,
+              pointBackgroundColor: "rgba(2,117,216,1)",
+              pointBorderColor: "rgba(255,255,255,0.8)",
+              pointHitRadius: 20,
+              pointBorderWidth: 2,
+                  backgroundColor: [
+                      "rgba(255, 99, 132, 0.2)",
+                      "rgba(54, 162, 235, 0.2)",
+                      "rgba(255, 206, 86, 0.2)",
+                      "rgba(75, 192, 192, 0.2)",
+                      "rgba(153, 102, 255, 0.2)",
+                      "rgba(255, 159, 64, 0.2)"
+                    ],
+                  borderColor: [
+                      "rgba(255,99,132,1)",
+                      "rgba(54, 162, 235, 1)",
+                      "rgba(255, 206, 86, 1)",
+                      "rgba(75, 192, 192, 1)",
+                      "rgba(153, 102, 255, 1)",
+                      "rgba(255, 159, 64, 1)"
+                    ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+        	  legend: {
+                  labels: {
+                      fontColor: "white",
+                      fontSize: 14
+                  }
+              },
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero:true,
+                          min: 0,
+                          //max: response, // The response got from the ajax request containing max limit for y axis
+                          maxTicksLimit: 5,
+                          fontColor: '#fbfbfd'
+                      },
+            gridLines: {
+              color: "gray",
+            }
+          }],
+          xAxes: [{
+                ticks: {
+                    fontColor: '#fbfbfd'
+                },
+            }]
+
+              }
+          }
+        });
+    }
+  };
+
+  charts.init();
+
+} )( jQuery );
+</script>
+<script>
+( function ( $ ) {
+
+var charts = {
+  init: function () {
+    // -- Set new default font family and font color to mimic Bootstrap's default styling
+    Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.global.defaultFontColor = '#292b2c';
+
+    this.ajaxGetSuggDptData();
+
+  },
+
+  ajaxGetSuggDptData: function () {
+    var request = $.ajax( {
+      method: 'GET',
+      url: "/chart-data-department"
+  } );
+
+    request.done( function ( response ) {
+      console.log( response );
+      charts.createCompletedChart( response );
+    });
+  },
+
+  /**
+   * Created the Completed Jobs Chart
+   */
+  createCompletedChart: function ( response ) {
+    //Chart.defaults.global.defaultFontColor = '#fbfbfd';
+    var ctx = document.getElementById("Chart_Bar_DPT").getContext("2d");
+    var myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+           	//labels: ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.","Jul.", "Aug.", "Sep.", "Oct.", "Nov", "Dec."],
+           	labels: ["IT", "Finance", "SSE", "RH", "Quality", "HW","EPL", "Administration"],
+            //labels : response,
+            datasets: [{ label: '# of suggestions/DPT',
+            //data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            data : response,
+            fontColor: 'white',
+            lineTension: 0.3,
+            backgroundColor: "rgba(2,117,216,0.2)",
+            borderColor: "rgba(2,117,216,1)",
+            pointRadius: 5,
+            pointBackgroundColor: "rgba(2,117,216,1)",
+            pointBorderColor: "rgba(255,255,255,0.8)",
+            pointHitRadius: 20,
+            pointBorderWidth: 2,
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(255, 159, 64, 0.2)"
+                  ],
+                borderColor: [
+                    "rgba(255,99,132,1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)"
+                  ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true,
+                        min: 0,
+                        max: 50, // The response got from the ajax request containing max limit for y axis
+                        maxTicksLimit: 5,
+                        fontColor: '#101010'
+                    },
+          gridLines: {
+            color: "#ff4c4c",
+          }
+        }],
+        xAxes: [{
+              ticks: {
+                  fontColor: '#101010'
+              },
+          }]
+
+            }
+        }
+      });
+  }
+};
+
+charts.init();
+
+} )( jQuery );
+</script>
+<script>
+( function ( $ ) {
+
+var charts = {
+  init: function () {
+    // -- Set new default font family and font color to mimic Bootstrap's default styling
+    Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.global.defaultFontColor = '#292b2c';
+
+    this.ajaxGetSuggDptData();
+
+  },
+
+  ajaxGetSuggDptData: function () {
+    var request = $.ajax( {
+      method: 'GET',
+      url: "/chart-data-type"
+  } );
+
+    request.done( function ( response ) {
+      console.log( response );
+      charts.createCompletedChart( response );
+    });
+  },
+
+  /**
+   * Created the Completed Jobs Chart
+   */
+  createCompletedChart: function ( response ) {
+    //Chart.defaults.global.defaultFontColor = '#fbfbfd';
+    var ctx = document.getElementById("pie-chart").getContext("2d");
+    var myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ["SAFETY/ERGONOMICS", "EFFECTIVENESS", "QUALITY"],
+        //labels : response,
+        datasets: [
+          {
+            label: "Total of suggestion per type",
+            backgroundColor: ["#ff3232", "#ffff66","#4ca64c"],
+            data: response
+            //data:response
+          }
+        ]
+      },
+      
+      options: {
+        title: {
+          display: true,
+          text: 'Total of suggestion per type'
+        }
+      }
+      });
+  }
+};
+
+charts.init();
+
+} )( jQuery );
+</script>

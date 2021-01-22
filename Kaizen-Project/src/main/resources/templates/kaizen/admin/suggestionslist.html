@@ -1,0 +1,743 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<title>Kaizen - Suggestions</title>
+<div th:replace="fragments/head::head"></div>
+<body>
+	<!-- Sidenav -->
+	<nav
+		class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white"
+		id="sidenav-main">
+		<div class="container-fluid">
+			<!-- Toggler -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#sidenav-collapse-main" aria-controls="sidenav-main"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<!-- Brand -->
+			<a class="navbar-brand pt-0" href="././dashboard"> <img
+				src="/assets/img/brand/blue.png" class="navbar-brand-img" alt="Brand">
+			</a>
+			<!-- User -->
+			<ul class="nav align-items-center d-md-none">
+				<li class="nav-item dropdown"><a class="nav-link" href="#"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false">
+						<div class="media align-items-center">
+							<span class="avatar avatar-sm rounded-circle">
+									<span th:if="${logged_user.getAvatar() != null || logged_user.getAvatar() != 'default.jpg' }">
+							<img alt="Avatar" th:src="@{getImag(id=${logged_user.getId()})}">
+									</span>
+									<span th:if="${logged_user.getAvatar() == 'default.jpg'}">
+							<img alt="Avatar" th:src="'/uploads/avatars/default.jpg'">
+									</span>
+							</span>
+						</div>
+				</a>
+					<div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+						<div class=" dropdown-header noti-title">
+							<h6 class="text-overflow m-0">Welcome!</h6>
+						</div>
+						<a href="/profile" class="dropdown-item"> <i
+							class="ni ni-single-02"></i> <span>My profile</span>
+						</a>
+						<div class="dropdown-divider"></div>
+						<a href="/logout"
+							onclick="event.preventDefault();
+                               document.getElementById('logout-form').submit();"
+							class="dropdown-item"> <i class="ni ni-user-run"></i> <span>Logout</span>
+						</a>
+						<form id="logout-form" action="/logout" style="display: none;">
+						</form>
+					</div></li>
+			</ul>
+			<!-- Collapse -->
+			<div class="collapse navbar-collapse" id="sidenav-collapse-main">
+				<!-- Collapse header -->
+				<div class="navbar-collapse-header d-md-none">
+					<div class="row">
+						<div class="col-6 collapse-brand">
+							<a href="././suggestionslist"> <img src="/assets/img/brand/blue.png">
+							</a>
+						</div>
+						<div class="col-6 collapse-close">
+							<button type="button" class="navbar-toggler"
+								data-toggle="collapse" data-target="#sidenav-collapse-main"
+								aria-controls="sidenav-main" aria-expanded="false"
+								aria-label="Toggle sidenav">
+								<span></span> <span></span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!-- Navigation -->
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link" href="././dashboard">
+							<i class="ni ni-tv-2 text-primary"></i> Dashboard
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="././users"> <i
+							class="ni ni-single-02 text-primary"></i> Users List
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="././report"> <i
+							class="ni ni-archive-2 text-primary"></i> Reports
+					</a></li>
+				</ul>
+				<!-- Divider -->
+				<hr class="my-3">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link"
+						href="././suggestionslist"> <i
+							class="ni ni-bullet-list-67 text-primary"></i> All Suggestions
+					</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="././suggestionssent"> <i
+							class="ni ni-cloud-upload-96 text-primary"></i> Suggestions Sent
+					</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="././suggestionsreceived"> <i
+							class="ni ni-cloud-download-95 text-primary"></i> Suggestions
+							Received
+					</a></li>
+				</ul>
+				<hr class="my-3">
+				<div>
+					<span class="heading">Committee Members :</span> <br>
+					<th:block th:each="committee_member : ${committee_members}">
+					<span class="description">
+					 <span class="text-success">●</span> [[${committee_member.first_name}]] [[${committee_member.last_name}]] 
+					<b>- [[${committee_member.department}]] </b>
+					</span> <br>
+					</th:block>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main content -->
+	<div class="main-content">
+		<!-- Top navbar -->
+		<nav class="navbar navbar-top navbar-expand-md navbar-dark"
+			id="navbar-main">
+			<div class="container-fluid">
+			
+						<div
+				th:if="${(bindingResult != null && bindingResult.getAllErrors() != null)}"
+				class="alert alert-warning alert-dismissible fade show" role="alert"
+				style="position: fixed; width: 18%; z-index: 100;">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<strong>Error : </strong> You should check in on some of those
+				fields
+			</div>			
+				<!-- Brand -->
+				<a
+					class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block">All
+					Suggestions</a>
+				<div style="margin-left: 100px">
+					<!-- Include flash-message -->
+				</div>
+				<!-- Include sweet alert -->
+				<div th:if="${param.success}">
+					<script type="text/javascript">
+						//swal("Good job!", {{ $message }} , "success");
+						swal("Well Saved", "Your suggestion has been successfully sent !", "success");
+					</script>
+				</div>
+				<div th:if="${param.NotFound}">
+					<script type="text/javascript">
+						//swal("Good job!", {{ $message }} , "success");
+						swal("Warning", "Please check if this suggestion already exist !", "warning");
+					</script>
+				</div>
+				<div th:if="${param.Error}">
+					<script type="text/javascript">
+						//swal("Good job!", {{ $message }} , "success");
+						swal("Error", "Please check the error !", "error");
+					</script>
+				</div>
+				<div th:if="${param.NotAllowed}">
+					<script type="text/javascript">
+						//swal("Good job!", {{ $message }} , "success");
+						swal("Not Allowed", "You can't send a suggestion to yourself !", "error");
+					</script>
+				</div>
+
+				<!-- User -->
+				<ul class="navbar-nav align-items-center d-none d-md-flex">
+					<div class="dropdown" style="float: right; padding: 13px">
+						<a href="#" class="uk-margin-small-right" uk-icon="bell"
+							onclick="return false;" role="button" data-toggle="dropdown"
+							id="dropdownMenu1" data-target="#"
+							style="float: left; color: white" aria-expanded="true"> </a> <span
+							th:if="${total_suggestion_received_not_replied} + ${total_suggestion_sent_no_feedback} != 0">
+							<span class="badgee badge-danger">[[${total_suggestion_received_not_replied}
+								+ ${total_suggestion_sent_no_feedback}]]</span>
+						</span> <span class="badgee badge-danger" style="display: none"></span>
+						<!-- End if -->
+					</div>
+					<li class="nav-item dropdown"><a class="nav-link pr-0"
+						href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false">
+							<div class="media align-items-center">
+								<span class="avatar avatar-sm rounded-circle">
+									<span th:if="${logged_user.getAvatar() != null}">
+							<img alt="Avatar" th:src="@{getImag(id=${logged_user.getId()})}">
+									</span>
+									<span th:if="${logged_user.getAvatar() == 'default.jpg'}">
+							<img alt="Avatar" th:src="'/uploads/avatars/default.jpg'">
+									</span>
+							</span>
+								<div class="media-body ml-2 d-none d-lg-block">
+									<span class="mb-0 text-sm  font-weight-bold">[[${#strings.substring(logged_user.getFirst_name(),0,1)}]].[[${logged_user.getLast_name()}]]<!-- First Name & Last Name --></span>
+								</div>
+							</div>
+					</a>
+						<div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+							<div class=" dropdown-header noti-title">
+								<h6 class="text-overflow m-0">Welcome!</h6>
+							</div>
+							<a href="/profile" class="dropdown-item"> <i
+								class="ni ni-single-02"></i> <span>My profile</span>
+							</a>
+							<div class="dropdown-divider"></div>
+							<a href="/logout"
+								onclick="event.preventDefault();
+                               document.getElementById('logout-form').submit();"
+								class="dropdown-item"> <i class="ni ni-user-run"></i> <span>Logout</span>
+							</a>
+							<form id="logout-form" action="/logout" style="display: none;">
+							</form>
+						</div></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- Header -->
+<!-- Header -->
+		<div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+			<div class="container-fluid">
+				<div class="header-body">
+					<!-- Card stats -->
+					<div class="row">
+						<div class="col-xl-3 col-lg-6">
+							<div class="card card-stats mb-4 mb-xl-0">
+								<div class="card-body">
+									<div class="row">
+										<div class="col">
+											<h5 class="card-title text-uppercase text-muted mb-0">Submit
+												Your Suggestion</h5>
+										</div>
+										<div class="col-auto">
+											<button
+												style="border-radius: 50%; height: 50px; width: 51px;"
+												class="page-link icon icon-shape bg-gradient-red text-white rounded-circle shadow" href="#modal-container" uk-toggle>
+												<img src="/assets/img/icons/edit.png" alt="">
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-6">
+							<div class="card card-stats mb-4 mb-xl-0">
+								<a style="text-decoration: none">
+									<div class="card-body">
+										<div class="row">
+											<div class="col">
+												<h5 class="card-title text-uppercase text-muted mb-0">Ttl
+													Suggestions</h5>
+												<span class="h2 font-weight-bold mb-0"
+													th:if="${total_suggestion} == 0">None<!-- Total of suggestion --></span>
+												<span class="h2 font-weight-bold mb-0"
+													th:if="${total_suggestion} != 0">[[${total_suggestion}]]<!-- Total of suggestion --></span>
+											</div>
+											<div class="col-auto">
+												<div
+													class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+													<i class="ni ni-chart-pie-35"></i>
+												</div>
+											</div>
+										</div>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-6">
+							<div class="card card-stats mb-4 mb-xl-0">
+								<a style="text-decoration: none">
+									<div class="card-body">
+										<div class="row">
+											<div class="col">
+												<h5 class="card-title text-uppercase text-muted mb-0">Ttl
+													Sugg. Sent</h5>
+												<span class="h2 font-weight-bold mb-0"
+													th:if="${suggestion_sent} == 0">None</span> <span
+													class="h2 font-weight-bold mb-0"
+													th:if="${suggestion_sent} != 0">[[${suggestion_sent}]]</span>
+											</div>
+											<div class="col-auto">
+												<div
+													class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+													<i class="ni ni-chart-bar-32"></i>
+												</div>
+											</div>
+										</div>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-6">
+							<div class="card card-stats mb-4 mb-xl-0">
+								<a style="text-decoration: none">
+									<div class="card-body">
+										<div class="row">
+											<div class="col">
+												<h5 class="card-title text-uppercase text-muted mb-0">Ttl
+													Sugg. Received</h5>
+												<span class="h2 font-weight-bold mb-0"
+													th:if="${total_suggestion_received} == 0">None</span> <span
+													class="h2 font-weight-bold mb-0"
+													th:if="${total_suggestion_received} != 0">[[${total_suggestion_received}]]</span>
+											</div>
+											<div class="col-auto">
+												<div
+													class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+													<i class="ni ni-chart-bar-32"></i>
+												</div>
+											</div>
+										</div>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Page content -->
+		<div th:replace="fragments/new_asuggestion_modal::body"></div>
+
+		<!-- ********************************************* BOOTSTRAP MODAL ********************************************* -->
+		<div class="modal fade" id="show_data" tabindex="-1" role="dialog"
+			style="background: rgba(0, 0, 0, 0.6);"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 class="uk-modal-title" style="font-size: 20px"></h3>
+						<div class="col-4 text-right" style="margin-left: 150px">
+							<a style="color: white" id="reference" name="reference"
+								class="btn btn-sm btn-primary"></a>
+						</div>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="card-body">
+							<div class="row">
+								<input type="hidden" name="id_sugg" id="id_sugg"> <input
+									type="hidden" name="id_user" id="id_user">
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-email">Receipent
+											Email</label> <input type="text" id="receipent" name="receipent"
+											readonly class="form-control form-control-alternative">
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-email">Facilitator</label>
+										<input type="text" id="facilitator" name="facilitator"
+											readonly class="form-control">
+									</div>
+								</div>
+
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-suggestion">Suggestion
+											Type</label> <input type="text" id="suggestion_domaine"
+											class="form-control" readonly name="suggestion_domaine">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-problem">Problem
+											Amelioration</label>
+										<textarea type="text" id="prob_amelioration" readonly
+											class="form-control" name="prob_amelioration"></textarea>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-proposed_solu">Proposed
+											Solution</label>
+										<textarea type="text" name="proposed_solution" readonly
+											id="proposed_solution" class="form-control"></textarea>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-suggestion">Sender
+											Email</label> <input type="text" id="sender" class="form-control"
+											readonly name="sender">
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-adopted">Adopted
+											Solution</label>
+										<textarea type="text" disabled="disabled"
+											id="adopted_solution" name="adopted_solution"
+											class="form-control"></textarea>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-control-label" for="input-justification">Justification</label>
+										<textarea type="text" name="justification" id="justification"
+											class="form-control" readonly></textarea>
+									</div>
+								</div>
+								<div uk-alert>
+									<span uk-icon="link"></span> Attached file : <a
+										id="attached_file" name="attached_file" download=""></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+		<!-- ********************************************* BOOTSTRAP MODAL ********************************************* -->
+		<div class="container-fluid mt--7">
+			<!-- Table -->
+			<div class="row">
+				<div class="col">
+					<div class="card shadow">
+						<div id="wrapper" style="overflow: hidden;">
+							<div id="first" class="card-header border-0" style="float: left">
+								<h3 class="mb-0">All Suggestions</h3>
+							</div>
+							<div id="second" class="card-header border-0"
+								style="overflow: hidden; float: right;">
+								<form class="uk-search uk-search-default" style="width: 300px;">
+									<span class="uk-search-icon-flip" uk-search-icon></span> <input
+										class="uk-search-input" style="border-radius: 10px;"
+										id="search" name="search" placeholder="Search" type="text">
+								</form>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<table id="mydata_table"
+								class="table align-items-center table-flush">
+								<thead class="thead-light">
+									<tr>
+										<th scope="col">File</th>
+										<th scope="col">Creation Date</th>
+										<th scope="col">Receipent Email</th>
+										<th scope="col">Sugg. Type</th>
+										<th scope="col">Prob. Amelio.</th>
+										<th scope="col">Prop. Solution</th>
+										<th scope="col">Status</th>
+										<th scope="col">Adopted Solution</th>
+										<!-- <th scope="col">Do You like ?</th> -->
+									</tr>
+								</thead>
+								<tbody class="searchable">
+									<th:block th:each="suggestion : ${suggestions}">
+										<tr
+											th:class="${suggestion.choices} =='Approved' ? 'colored-row':  ''">
+											<input type="hidden" name="id_s" id="id_s"
+												value="${suggestion.id}" />
+											<th 
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal" style="padding-right: 0em !important">
+												<span th:if="${suggestion.attachement_file != NULL}">
+													<img src="/assets/img/icons/attachment.png" alt=""
+													style="width: 15px; height: 15px">
+											</span>
+											<span th:if="${suggestion.attachement_file == NULL}">
+													<img src="/assets/img/icons/close.png" alt=""
+													style="width: 10px; height: 10px">
+											</span>
+											</th>
+											<th 
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal" scope="row">
+												<div class="media align-items-center">
+													<div class="media-body">
+														<span class="mb-0 text-sm" id="release_date"
+															th:text="${#dates.format(suggestion.created_at, 'dd/MMM/yyyy')}">
+															<!-- Suggestion date -->
+														</span>
+													</div>
+												</div>
+											</th>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal"><span
+												th:text="${suggestion.receipent_user}"> <!-- First Name & Last Name -->
+											</span></td>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal"><span
+												th:text="${suggestion.type_id.sugg_type}"> <!-- Suggestion Type -->
+											</span></td>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal" style="word-wrap: break-word;"><span
+												th:text="${suggestion.problem_amelioration}"> </span></td>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:text="${suggestion.proposed_solution}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal" style="word-wrap: break-word;">
+												<!-- Proposed solution -->
+											</td>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal"><span
+												th:if="${suggestion.choices == 'Refused' }"> <span
+													uk-icon="icon: close"></span> <b>Refused</b>
+											</span> <span th:if="${suggestion.choices == 'Approved' }"> <span
+													uk-icon="icon: check"></span> <b>Approved</b>
+											</span> <span th:if="${suggestion.choices == 'Pending' }"> <img
+													src="/assets/img/icons/Ripple-1.3s-30px.gif" alt="Pending"><b>Pending</b>
+											</span></td>
+											<td
+												th:data-release_date="${#dates.format(suggestion.created_at, 'yyyy-MM-dd')}"
+												th:data-facilitator="${suggestion.facilitator}"
+												th:data-problem="${suggestion.problem_amelioration}"
+												th:data-proposed_solution="${suggestion.proposed_solution}"
+												th:data-domaine="${suggestion.type_id.sugg_type}"
+												th:data-justification="${suggestion.justification}"
+												th:data-retained_sugg="${suggestion.choices}"
+												th:data-adopted_solution="${suggestion.adopted_solution}"
+												th:data-id="${suggestion.id}"
+												th:text="${suggestion.adopted_solution}"
+												th:data-receipent="${suggestion.receipent_user}"
+												th:data-sender="${suggestion.user_id.email}"
+												data-target="#show_data"
+												data-user_id="{{ $value->user_id }}"
+												th:data-file="${suggestion.attachement_file}"
+												data-toggle="modal" class="text-left">
+												<!-- Adopted solution -->
+											</td>
+											<!-- <td class="col-md-auto" scope="row"
+												style="text-align: center;">
+												<div>
+													<a th:data-id="${suggestion.id}"
+														class="heart {{ $likes = DB::table('likes')->where('id_sugg',$value->suggestion_id)->where('user_id',$user->id)->count() != null ? 'heart-blast' : '' }}"></a>
+												</div>
+											</td> -->
+										</tr>
+									</th:block>
+						<th:block th:if="${suggestions.isEmpty()}">
+		                	<tr><td colspan='8' style='text-align: center;'><b>No Suggestions Found</b></td></tr>
+		                </th:block>
+								</tbody>
+							</table>
+						</div>
+						<div class="card-footer py-4">
+              <!-- suggestions pagination -->
+			<nav aria-label="Pagination" th:if="${suggestions.totalPages gt 0}">
+			    <ul class="pagination justify-content-center mb-0 font-weight-medium">
+			         <li class="page-item" th:classappend="${suggestions.number eq 0} ? 'disabled'">
+					      <a class="page-link" th:href="@{/kaizen/admin/suggestionslist?page={id}(id=${suggestions.number lt 2 ? 1 : suggestions.number})}"
+					      	 aria-label="Previous">
+					        <i class="fa fa-angle-left"></i>
+					        <span class="sr-only">Previous</span>
+					      </a>
+			    	</li>
+			        <li class="page-item" th:classappend="${i eq suggestions.number + 1} ? 'active'"
+			            th:each="i : ${#numbers.sequence( suggestions.number + 1, suggestions.totalPages > 10 + suggestions.number ? suggestions.number + 10 : suggestions.totalPages, 1)}">
+			            <a class="page-link" th:href="@{/kaizen/admin/suggestionslist?page={id}(id=${i})}" th:text="${i}"
+			               th:title="${'Page '+ i}"
+			               rel="tooltip"></a>
+			        </li>
+			        <li class="page-item disabled" th:if="${suggestions.number + 10 < suggestions.totalPages}">
+			            <a class="page-link" href="#">
+			                <span data-feather="more-horizontal" width="20" height="20"></span>
+			            </a>
+			        </li>
+			        <li class="page-item" th:classappend="${suggestions.number + 1 eq suggestions.totalPages} ? 'disabled'">
+					      <a class="page-link" th:href="@{/kaizen/admin/suggestionslist?page={id}(id=${suggestions.number + 2})}"
+					      	 aria-label="Next">
+					        <i class="fa fa-angle-right"></i>
+					        <span class="sr-only">Next</span>
+					      </a>
+			    	</li>
+			    </ul>
+			</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer class="footer">
+				<div class="row align-items-center justify-content-xl-between">
+					<div class="col-xl-6">
+						<div class="copyright text-center text-xl-left text-muted">
+							&copy; 2019 <a href="" class="font-weight-bold ml-1"
+								target="_blank">KAIZEN PLATFORM <span
+								style="color: #8898aa">V 1.0</span></a>
+						</div>
+					</div>
+				</div>
+			</footer>
+
+		</div>
+	</div>
+	<!-- Second Notification Popup Begin -->
+	<div class="col-md-4">
+		<div class="modal fade" id="second-modal-notification" tabindex="-1"
+			role="dialog" aria-labelledby="modal-notification" aria-hidden="true"
+			style="background: rgba(0, 0, 0, 0.6);">
+			<div class="modal-dialog modal-danger modal-dialog-centered modal-"
+				role="document">
+				<div class="modal-content bg-gradient-danger">
+
+					<div class="modal-header">
+						<h6 class="modal-title" id="modal-title-notification">Your
+							Notification</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">x</span>
+						</button>
+					</div>
+
+					<div class="modal-body">
+
+						<div class="py-3 text-center">
+							<i class="ni ni-bell-55 ni-3x"></i>
+							<!--<h4 class="heading mt-4">You should read this!</h4>
+                      <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>-->
+							<p class="mt-3 mb-0 text-muted text-sm"
+								style="font-size: 17px !important;">
+								<span th:if="${total_suggestion_sent_no_feedback} == 0">
+									<span class="text-success mr-2" style="color: white !important"><i
+										class="ni ni-bold-up"></i> No feedback on hold</span>
+								</span> 
+								<span th:if="${total_suggestion_sent_no_feedback} > 0">
+									<span class="text-warning mr-2" style="color: white !important"><i
+										class="ni ni-bold-down"></i><b>
+											[[${total_suggestion_sent_no_feedback}]]</b> Sent with no
+										feedback</span>
+								</span>
+							</p>
+							<p class="mt-3 mb-0 text-muted text-sm"
+								style="font-size: 17px !important;">
+								<span th:if="${total_suggestion_received_not_replied} == 0">
+									<span class="text-success mr-2" style="color: white !important"><i
+										class="ni ni-bold-up"></i> Nothing to reply</span>
+								</span> <span th:if="${total_suggestion_received_not_replied} > 0">
+									<span class="text-warning mr-2" style="color: white !important"><i
+										class="ni ni-bold-down"></i><b>
+											[[${total_suggestion_received_not_replied}]]</b> Received Not replied</span>
+								</span>
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="fragments/footer_scripts::script"></div>
+	<div th:replace="fragments/suggestion_footer_scripts::script"></div>
+</body>
+</html>

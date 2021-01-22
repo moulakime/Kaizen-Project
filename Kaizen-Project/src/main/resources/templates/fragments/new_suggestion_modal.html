@@ -1,0 +1,82 @@
+<body th:fragment="new_suggestion_modal">
+<!-- Modal Add New Suggestion Begin -->
+<div id="modal-container" class="uk-modal-container" uk-modal>
+    <div id="modal-container_second" class="uk-modal-dialog uk-modal-body" style="border-radius: 20px;">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+  <form th:action="@{/insert}" th:object="${suggestion}" method="post" enctype="multipart/form-data" >
+  <!-- enctype="multipart/form-data" -->
+        <h2 class="uk-modal-title">New Suggestion</h2>
+        <div id="bande" name="bande" style="width:100%;height:10px"></div>
+    <fieldset class="uk-fieldset">
+      <div class="card-body">
+        <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group">
+            <label class="form-control-label" for="input-suggestion">Suggestion Type</label>
+            <select class="form-control select2-hidden-accessible" id="type_id" th:field="*{type_id.id}" name="type_id" required>
+											<option value="-1" selected>- Make a choice -</option>
+											<option th:each="type : ${types}"
+												th:value="${type.id}"
+												th:text="${type.sugg_type}"></option>
+			</select>
+          </div>
+        </div>
+        <div class="col-lg-4">
+        <div class="form-group">
+          <input type="hidden" class="uk-input" th:field="*{user_id}" value="9" name="user_id">
+          <input type="hidden" class="uk-input" name="release_d" th:attr="value =${#calendars.format(#calendars.createNow(), 'dd MMM yyyy HH:mm')}">
+          <label class="form-control-label" for="input-receipent-email">Receipent Email</label>
+          <input type="email" id="receipent" name="receipent" th:field="*{receipent_user}"  placeholder="Receipent email" required class="form-control form-control-alternative">
+          <div id="receipentList"></div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group">
+          <label class="form-control-label" for="input-facilitator">Facilitator</label>
+          <input type="email" id="input-facilitator" placeholder="Supervisor" th:field="*{facilitator}"  required class="form-control form-control-alternative" name="facilitator">
+        </div>
+      </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+              <label class="form-control-label" for="input-prob-amelioration">Problem Amelioration</label>
+              <textarea type="text" id="input-email" placeholder="Problem Amelioration" th:field="*{problem_amelioration}"  required class="form-control form-control-alternative" name="amelioration_prob"></textarea>
+            </div>
+          </div>
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label class="form-control-label" for="input-proposed-solution">Proposed Solution</label>
+            <textarea type="text" id="input-proposed" placeholder="Proposed Solution" th:field="*{proposed_solution}"  required class="form-control form-control-alternative" name="proposed_solu"></textarea>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="form-group">
+            <label class="form-control-label" for="input-attachement">Send an attachment file</label>
+            <div class="uk-placeholder uk-text-center">
+              <span uk-icon="icon: cloud-upload"></span>
+              <div uk-form-custom>
+                  <input type="file" name="attachment_file"   id="attachment_file">
+                  <span class="uk-link" style="color:#254263">Attach file by select it here</span><br>
+                  <span style="color:black;font-size:12px" class="filename"></span>
+              </div>
+          </div>
+          <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+          </div>
+        </div>
+        </div>
+           <span id='email_message' style="font-size: 14px; float: left; margin-bottom: 10px;"></span>
+		  <span id="status" style="font-size: 14px; float: left; margin-bottom: 10px"></span>
+<!-- INPUT -->
+</div>
+    </fieldset>
+    <div id="modal_footer" class="uk-modal-footer uk-text-right">
+          <button class="btn btn-info" type="submit" name="submit"><i class="ni ni-send"></i> Send</button>
+      </div>
+</form>
+    </div>
+  </div>
+
+<!-- Modal Add New Suggestion End -->
+
+</body>

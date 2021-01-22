@@ -1,0 +1,9 @@
+une servlet est une class java qui hérite à partir d'une class httpServlet
+JRE + serveur web + navigateur
+
+Tachesq :
+       1- Récuperation des données de l'utilisateur
+       2- Traitement 
+       3- Générer une réponse  
+les servlets
+JSP/JSTL

@@ -1,0 +1,186 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<title>Kaizen - Register</title>
+<div th:replace="fragments/head::head"></div>
+<body class="bg-default">
+	<div class="main-content">
+		<div th:replace="fragments/header::header"></div>
+		<div class="header bg-gradient-success py-7 py-lg-8">
+			<div
+				th:if="${(bindingResult != null && bindingResult.getAllErrors() != null)}"
+				class="alert alert-warning alert-dismissible fade show" role="alert"
+				style="position: fixed; width: 18%; z-index: 100;">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<strong>Error : </strong> You should check in on some of those
+				fields
+			</div>
+			<div th:if="${Message_email}"
+				class="alert alert-warning alert-dismissible fade show" role="alert"
+				style="position: fixed; width: 18%; z-index: 100;">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<strong>Existing : </strong> Email already used.
+			</div>
+			<div th:if="${Message}"
+				class="alert alert-warning alert-dismissible fade show" role="alert"
+				style="position: fixed; width: 18%; z-index: 100;">
+				<button type="button" class="close" data-dismiss="alert"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<strong>Existing : </strong> Immatricule already used.
+			</div>
+			<div class="separator separator-bottom separator-skew zindex-100">
+				<svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none"
+					version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
+        </svg>
+			</div>
+		</div>
+		<div class="container mt--8 pb-5">
+			<div class="row justify-content-center">
+				<div class="col-lg-6 col-md-8">
+					<div class="card bg-secondary shadow border-0">
+						<div class="card-body px-lg-5 py-lg-5">
+							<div class="text-center text-muted mb-4">
+								<small>Sign up with credentials</small>
+							</div>
+							<div th:if="${param.success}">
+								<div class="alert alert-info"><span><i class="ni ni-satisfied"></i></span>
+								 You've successfully registered
+									to our platform!</div>
+							</div>
+							<form id="myform" method="POST" th:action="@{/addUser}"
+								th:object="${user}">
+								<div class="form-group">
+									<div id="fl_name"
+										class="input-group input-group-alternative mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="hashtag"></span></i></span>
+										</div>
+										<input class="form-control" placeholder="First Name"
+											th:field="*{first_name}" id="first_name" name="first_name"
+											type="text" value="" autofocus required>
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="hashtag"></span></i></span>
+										</div>
+										<input class="form-control" placeholder="Last Name"
+											th:field="*{last_name}" id="last_name" name="last_name"
+											type="text" value="" required>
+									</div>
+									<span id='success_message'
+										style="font-size: 13px; float: right; margin-top: -14px;"></span>
+								</div>
+								<div class="form-group">
+									<div id="job_supervisor"
+										class="input-group input-group-alternative mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="tag"></span></i></span>
+										</div>
+										<input class="form-control" placeholder="Job Title"
+											th:field="*{job_title}" id="job_title" name="job_title"
+											type="text" value="" required>
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span
+												uk-icon="bookmark"></span></i></span>
+										</div>
+										<input class="form-control" placeholder="Department Manager"
+											th:field="*{supervisor}" id="supervisor" name="supervisor"
+											type="email" value="" required>
+									</div>
+									<span id='job_sup_message'
+										style="font-size: 13px; float: right; margin-top: -14px;"></span>
+								</div>
+								<div class="form-group">
+									<div class="input-group input-group-alternative mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="nut"></span></i></span>
+										</div>
+										<select class="form-control" th:field="*{department}"
+											name="departement" required>
+											<option value="-1" selected>- choose your dpt -</option>
+											<option th:each="department : ${departments}"
+												th:value="${department.department_name}"
+												th:text="${department.department_name}"></option>
+										</select>
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="info"></span></i></span>
+										</div>
+										<input class="form-control" maxlength="4" id="immatricule"
+											placeholder="immatricule"
+											onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')"
+											name="immatricule" type="text" required>
+									</div>
+									<span id="immatricule_status"
+										style="font-size: 13px; float: right; margin-top: -12px;"></span>
+
+								</div>
+								<div class="form-group">
+									<div id="email_div"
+										class="input-group input-group-alternative mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="mail"></span></i></span>
+										</div>
+										<input class="form-control" placeholder="Email"
+											th:field="*{email}" id="email" name="email" type="email"
+											value="" required>
+									</div>
+									<span id='email_message'
+										style="font-size: 13px; float: right; margin-top: -3px;"></span>
+									<span id="status" style="font-size: 13px; float: right;"></span>
+								</div>
+								<div class="form-group">
+									<div id="pass" class="input-group input-group-alternative">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="lock"></span></i></span>
+										</div>
+										<input class="form-control is-valid" id="password"
+											placeholder="Password"
+											onkeyup="CheckPasswordStrength(this.value)"
+											th:field="*{password}" name="password" type="password"
+											required>
+									</div>
+									<span id='strength'
+										style="font-size: 13px; float: right; margin-top: 3px;"></span>
+									<br>
+									<div id="re_pass" class="input-group input-group-alternative">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><span uk-icon="unlock"></span></i></span>
+										</div>
+										<input id="password-confirm" class="form-control is-valid"
+											placeholder="Confirm Password" name="password_confirmation"
+											type="password" required>
+									</div>
+									<span id='message'
+										style="font-size: 13px; float: right; margin-top: 3px;"></span>
+								</div>
+								<div class="text-center">
+									<button id="submit" type="submit" class="btn btn-primary mt-4">Create
+										account</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="row mt-3">
+						<div class="col-6">
+							<a href="/login" class="text-light"><small>Already
+									have one ?</small></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Footer -->
+	<footer class="py-5">
+		<div th:replace="fragments/footer::footer"></div>
+	</footer>
+	<div th:replace="fragments/footer_scripts::script"></div>
+</body>
+</html>
